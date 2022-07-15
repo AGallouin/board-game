@@ -48,13 +48,13 @@ async fn mongodb(login: &str, password: &str, db_name: &str, collection_name: &s
     let coll = db.collection::<User>(collection_name);
 
 
-    let first_name = "Nouveau".to_string();
-    let last_name = "Salaud".to_string();
-    add_user(coll, first_name, last_name).await?;
+    //let first_name = "Nouveau".to_string();
+    //let last_name = "Salaud".to_string();
+    //add_user(coll, first_name, last_name).await?;
 
-    //let field = "first_name".to_string();
-    //let value = "Nouveau".to_string();
-    //find_user(coll, field, value).await?;
+    let field = "first_name".to_string();
+    let value = "Nouveau".to_string();
+    find_user(coll, field, value).await?;
             
     //remove_user(coll, field, value).await?;
     Ok({})
@@ -64,8 +64,6 @@ async fn mongodb(login: &str, password: &str, db_name: &str, collection_name: &s
 #[tokio::main]
 async fn main() {
     dotenv().expect("Failed to read .env file");
-    println!("Hello, world!");
-    println!("{}", env::var("MONGO_LOGIN").expect("MONGO_LOGIN not found"));
 
     match (env::var("MONGO_LOGIN"), env::var("MONGO_PASSWORD")) {
         (Ok(login), Ok(password)) => {
