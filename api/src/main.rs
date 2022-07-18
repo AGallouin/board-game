@@ -9,11 +9,7 @@ use dotenv::dotenv;
 use mongo::MongoCollection;
 
 //use rocket::{get, launch, post, http::Status, serde::json::Json};
-//use mongo::User;
-//use mongodb::{results::{InsertOneResult}};
 //use rocket::State;
-
-
 
 
 
@@ -39,13 +35,10 @@ async fn main() {
     };
 
 
-    database.insert_one()
-    //database.add_user("Test".to_string(), "Popo".to_string());
-            
-            //rocket::build().manage(db).mount("/", routes![add_user])
-
-    //database.add_user("Test".to_string(), "Popo".to_string()).await?;
-
+    // Fonction marche!
+    //database.add_user("Test".to_string(), "Popo".to_string()).await;
+    database.find_user("first_name".to_string(), "Aki".to_string()).await;
+    //database.remove_user("first_name".to_string(), "popo".to_string()).await;
 }
 
 
