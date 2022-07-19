@@ -1,5 +1,11 @@
 // Import Crates and specific functions from Crates
-use mongodb::{bson::doc, bson::oid::ObjectId, Client, Collection};
+use mongodb::{
+    bson::doc, 
+    bson::oid::ObjectId,
+    results::{InsertOneResult, DeleteResult},
+    error::Error,
+    Client, 
+    Collection};
 use serde::{Serialize, Deserialize};
 use futures::stream::{TryStreamExt};
 
@@ -27,7 +33,7 @@ impl MongoCollection {
 
     // Function that initialize properties of the Structure
     // Launch the connection into MongoDB and return a Structure which contains the user defined mongodb::Collection
-    pub async fn get_database(login: &str, password: &str, db_name: &str, collection_name: &str) -> mongodb::error::Result<Self> {
+    pub async fn get_database(login: &str, password: &str, db_name: &str, collection_name: &str) -> Result<Self, Error> {
 
         let connection_url = format!("mongodb+srv://{}:{}@cluster0.cjovhvv.mongodb.net/?retryWrites=true&w=majority", login, password);
         let client = Client::with_uri_str(connection_url).await;
@@ -49,20 +55,25 @@ impl MongoCollection {
 
 
     // Function to add one User
-    pub async fn add_user(&self, first_name: String, last_name: String) -> mongodb::results::InsertOneResult {
+    pub async fn add_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
+
+        let new_doc = User {
+            id: None,
+            first_name: new_user.first_name,
+            last_name: new_user.last_name,
+        };
 
         let result = self
             .collection
-            .insert_one(User {id: None, first_name, last_name}, None)
-            .await
-            .expect("Error while adding a new user!");
+            .insert_one(new_doc, None)
+            .await;
 
         result
     }
 
 
     // Function to find a specific User
-    pub async fn find_user(&self, field: String, value: String) -> mongodb::error::Result<()> {
+    pub async fn find_user(&self, field: String, value: String) -> Result<(), Error> {
 
         let filter = doc!{field: value};
 
@@ -80,13 +91,12 @@ impl MongoCollection {
 
 
     // Function to remove one User
-    pub async fn remove_user(&self, field: String, value: String) -> mongodb::results::DeleteResult {
+    pub async fn remove_user(&self, field: String, value: String) -> Result<DeleteResult, Error> {
 
         let result = self
             .collection
             .delete_one(doc!{field: value}, None)
-            .await
-            .expect("Error while deleting user!");
+            .await;
 
         result
     }
