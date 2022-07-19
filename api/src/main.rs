@@ -12,16 +12,6 @@ use api::add_user;
 use rocket::{launch, routes};
 
 
-use rocket::get;
-#[get("/")]
-fn hello () -> &'static str {
-    "Salut"
-}
-
-#[get("/<name>")]
-fn helloname (name: String) -> String {
-    format!("Hello {}!", name)
-}
 
 // II. Main Function
 #[launch]
