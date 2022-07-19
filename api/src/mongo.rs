@@ -7,7 +7,6 @@ use mongodb::{
     Client, 
     Collection};
 use serde::{Serialize, Deserialize};
-use futures::stream::{TryStreamExt};
 
 
 // Create a specific Public Structure to fit MongoDB Database, with outter attribute coming from the "serde" crate
@@ -73,25 +72,22 @@ impl MongoCollection {
 
 
     // Function to find a specific User
-    pub async fn find_user(&self, field: String, value: String) -> Result<(), Error> {
+    pub async fn find_user(&self, field: &String, value: &String) -> Result<User, Error> {
 
         let filter = doc!{field: value};
 
-        let mut cursor = self
+        let user_detail = self
             .collection
-            .find(filter, None)
-            .await?;
+            .find_one(filter, None)
+            .await
+            .map(|i| i.unwrap());
 
-        while let Some(user) = cursor.try_next().await? {
-            println!("{:?}", user);
-        };
-
-        Ok({})
+        user_detail
     }
 
 
     // Function to remove one User
-    pub async fn remove_user(&self, field: String, value: String) -> Result<DeleteResult, Error> {
+    pub async fn remove_user(&self, field: &String, value: &String) -> Result<DeleteResult, Error> {
 
         let result = self
             .collection

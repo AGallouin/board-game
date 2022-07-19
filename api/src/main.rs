@@ -1,14 +1,14 @@
 // I. Importing Crates and Modules
-    // Import Modules
+// Import Modules
 mod mongo;
 mod api;
 
 
-    // Import Crates and specific functions from Crates
+// Import Crates and specific functions from Crates
 use std::env;
 use dotenv::dotenv;
 use mongo::MongoCollection;
-use api::add_user;
+use api::{launch_page, add_user, find_user, remove_user};
 use rocket::{launch, routes};
 
 
@@ -35,7 +35,15 @@ async fn rocket() -> _ {
 
     rocket::build()
         .manage(database)
+        .mount("/", routes![launch_page])
         .mount("/", routes![add_user])
+        .mount("/", routes![find_user])
+        .mount("/", routes![remove_user])
+
+}
+
+
+
 
 
     // Add new User (Use of match as "add_user" returns Result<T, E>) directly in terminal without API
@@ -53,9 +61,3 @@ async fn rocket() -> _ {
     //    Ok(_) => println!("User deleted from Database"),
     //    Err(e) => panic!("{e}"),  
     //};
-
-}
-
-
-
-
