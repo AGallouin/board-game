@@ -15,8 +15,8 @@ use serde::{Serialize, Deserialize};
 pub struct User {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
-    pub first_name: String,
-    pub last_name: String,
+    pub login: String,
+    pub password: String,
 }
 
 
@@ -58,8 +58,8 @@ impl MongoCollection {
 
         let new_doc = User {
             id: None,
-            first_name: new_user.first_name,
-            last_name: new_user.last_name,
+            login: new_user.login,
+            password: new_user.password,
         };
 
         let result = self
@@ -72,9 +72,9 @@ impl MongoCollection {
 
 
     // Function to find a specific User
-    pub async fn find_user(&self, field: &String, value: &String) -> Result<User, Error> {
+    pub async fn find_user(&self, login: &String) -> Result<User, Error> {
 
-        let filter = doc!{field: value};
+        let filter = doc!{login};
 
         let user_detail = self
             .collection
@@ -87,11 +87,13 @@ impl MongoCollection {
 
 
     // Function to remove one User
-    pub async fn remove_user(&self, field: &String, value: &String) -> Result<DeleteResult, Error> {
+    pub async fn remove_user(&self, login: &String) -> Result<DeleteResult, Error> {
+
+        let filter = doc!{login};
 
         let result = self
             .collection
-            .delete_one(doc!{field: value}, None)
+            .delete_one(filter, None)
             .await;
 
         result

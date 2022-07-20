@@ -17,8 +17,8 @@ pub async fn add_user(db: &State<MongoCollection>, new_user: Json<User>) -> Resu
     
     let data = User {
         id: None,
-        first_name: new_user.first_name.to_owned(),
-        last_name: new_user.last_name.to_owned(),
+        login: new_user.login.to_owned(),
+        password: new_user.password.to_owned(),
     };
 
     let user_detail = db.add_user(data).await;
@@ -30,19 +30,14 @@ pub async fn add_user(db: &State<MongoCollection>, new_user: Json<User>) -> Resu
 
 
 // find_user API Handler using rocket
-#[get("/user/<field>/<value>")]
-pub async fn find_user(db: &State<MongoCollection>, field: String, value: String) -> Result<Json<User>, Status> {
+#[get("/user/<login>")]
+pub async fn find_user(db: &State<MongoCollection>, login: String) -> Result<Json<User>, Status> {
 
-    if field.is_empty() {
+    if login.is_empty() {
         return Err(Status::BadRequest);
     };
 
-    if value.is_empty() {
-        return Err(Status::BadRequest);
-    };
-
-    let user_detail = db.find_user(&field, &value).await;
-
+    let user_detail = db.find_user(&login).await;
     match user_detail {
         Ok(user) => Ok(Json(user)),
         Err(_) => Err(Status::InternalServerError),
@@ -52,18 +47,14 @@ pub async fn find_user(db: &State<MongoCollection>, field: String, value: String
 
 
 // remove_user API Handler using rocket
-#[delete("/user/<field>/<value>")]
-pub async fn remove_user(db: &State<MongoCollection>, field: String, value: String) -> Result<Json<&str>, Status> {
+#[delete("/user/<login>")]
+pub async fn remove_user(db: &State<MongoCollection>, login: String) -> Result<Json<&str>, Status> {
 
-    if field.is_empty() {
+    if login.is_empty() {
         return Err(Status::BadRequest);
     };
 
-    if value.is_empty() {
-        return Err(Status::BadRequest);
-    };
-
-    let result = db.remove_user(&field, &value).await;
+    let result = db.remove_user(&login).await;
     match result {
         Ok(res) => {
             if res.deleted_count == 1 {
