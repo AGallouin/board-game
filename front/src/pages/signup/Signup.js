@@ -1,5 +1,6 @@
 // Hooks
 import { useState } from 'react'
+import { useFetch } from '../../hooks/useFetch'
 
 // Styles
 import './Signup.css'
@@ -11,12 +12,18 @@ export default function Signup() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [userName, setUserName] = useState('')
+    const [jsonObject, setJsonObject] = useState('')
+    const [url, setUrl] = useState('http://localhost:3000/tmp/')
+    const [option, setOption] = useState('GET')
+    const { data, isPending, error } = useFetch({url, jsonObject, option})
 
 
     // Event handlers
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(email, password, userName)
+
+        setJsonObject({ email, password, userName })
+        setOption('POST')
     }
     
 

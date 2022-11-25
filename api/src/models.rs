@@ -1,1 +1,0 @@
-// Module for modularizing database logics

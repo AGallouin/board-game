@@ -9,12 +9,20 @@ use mongodb::{
 use serde::{Serialize, Deserialize};
 
 
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MongoLogInfo {
+    pub login: String,
+    pub password: String,
+}
+
+
 // Create a specific Public Structure to fit MongoDB Database, with outter attribute coming from the "serde" crate
 // The Debug trait added will allow for the println! to use its Display Traits using ":?"
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
-    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<ObjectId>,
+    //#[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    //pub id: Option<ObjectId>,
     pub login: String,
     pub password: String,
 }
@@ -39,14 +47,13 @@ impl MongoCollection {
 
         match client {
                 Ok(valid_client) => {
-                println!("Connected successfully to MongoDB Atlas");
+                    println!("Connected successfully to MongoDB Atlas");
 
-                let db = valid_client.database(db_name);
-                let col = db.collection::<User>(collection_name);
+                    let db = valid_client.database(db_name);
+                    let col = db.collection::<User>(collection_name);
                 
-                //col.insert_one(User {id: None, first_name: "popo".to_string(), last_name: "papa".to_string()}, None).await?;
-                Ok(MongoCollection { collection: col })
-
+                    //col.insert_one(User {id: None, first_name: "popo".to_string(), last_name: "papa".to_string()}, None).await?;
+                    Ok(MongoCollection { collection: col })
             },
             Err(e) => Err(e),
         }
@@ -57,7 +64,7 @@ impl MongoCollection {
     pub async fn add_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
 
         let new_doc = User {
-            id: None,
+            //id: None,
             login: new_user.login,
             password: new_user.password,
         };
@@ -71,10 +78,27 @@ impl MongoCollection {
     }
 
 
-    // Function to find a specific User
-    pub async fn find_user(&self, login: &String) -> Result<User, Error> {
+/*     // Get all users
+    pub async fn get_all_users(&self) -> Result<Vec<User>, Error> {
 
-        let filter = doc!{login};
+        let cursors = self
+            .collection
+            .find(None, None)
+            .await
+            .ok()
+            .expect("Error getting list of users");
+
+        let users = cursors.map(|doc| doc.unwrap()).collect();
+        Ok(users)
+    } */
+
+
+
+
+    // Function to find a specific User
+/*     pub async fn find_user(&self, login: &String) -> Result<User, Error> {
+
+        let filter = doc!{"login": login};
 
         let user_detail = self
             .collection
@@ -83,11 +107,11 @@ impl MongoCollection {
             .map(|i| i.unwrap());
 
         user_detail
-    }
+    } */
 
 
     // Function to remove one User
-    pub async fn remove_user(&self, login: &String) -> Result<DeleteResult, Error> {
+/*    pub async fn remove_user(&self, login: &String) -> Result<DeleteResult, Error> {
 
         let filter = doc!{login};
 
@@ -97,5 +121,5 @@ impl MongoCollection {
             .await;
 
         result
-    }
+    } */
 }
