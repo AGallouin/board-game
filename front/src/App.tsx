@@ -1,28 +1,31 @@
 // Base
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// Components & Pages
+// Pages & Components
 import Navbar from './components/Navbar';
 import Home from './pages/home/Home';
-import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
+import Login from './pages/login/Login';
 
 // Styles
-import './App.css'
+import './App.css';
 
 
 function App() {
+    
     return (
         <div className="App">
-            
+
             <BrowserRouter>
-            <Navbar />
+                <Navbar />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/login" element={<Login />} />
                 </Routes>
             </BrowserRouter>
+
         </div>
     );
 }

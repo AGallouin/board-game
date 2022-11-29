@@ -1,2 +1,2 @@
 pub mod mongo_struct;
-pub mod rocket_struct;
+pub mod cors_struct;

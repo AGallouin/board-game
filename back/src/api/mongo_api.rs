@@ -6,76 +6,56 @@
 use crate::structures;
 
 // Import Crates and specific functions from Modules
-use structures::mongo_struct::{MongoLogInfo, User, MongoCollection};
-use mongodb::results::InsertOneResult;
-use rocket::{get, post, delete, http::Status, serde::json::Json, State};
+use structures::mongo_struct::{User, MongoCollection};
+use mongodb::{results::InsertOneResult, error::Error};
+use rocket::{get, post, http::Status, serde::json::Json, State};
 
 
-// Launch page
+
+/* Default page */
 #[get("/")]
-pub fn launch_page(current_log_info: &State<MongoLogInfo>) -> Json<MongoLogInfo> {
-
-    let test = MongoLogInfo {
-        login: current_log_info.login.to_owned(),
-        password: current_log_info.password.to_owned()
-    };
-    
-    Json(test)
+pub fn default_page() -> &'static str {
+    "This is the back end server default page"
 }
 
 
-
-// add_user API Handler using rocket
+/* add_user API Handler using rocket */
 #[post("/", format="json", data="<new_user>")]
-pub async fn add_user(db: &State<MongoCollection>, new_user: Json<User>) -> Result<Json<InsertOneResult>, Status> {
+pub async fn add_user_api(db: &State<MongoCollection>, new_user: Json<User>) -> Result<Json<InsertOneResult>, Status> {
     
-    println!("{}", new_user.login.to_owned());
+    println!("{}", new_user.email.to_owned());
+    println!("{}", new_user.password.to_owned());
+    println!("{}", new_user.username.to_owned());
 
-    let data = User {
-        //id: None,
-        login: new_user.login.to_owned(),
+    let data: User = User {
+        id: None,
+        email: new_user.email.to_owned(),
         password: new_user.password.to_owned(),
+        username: new_user.username.to_owned(),
     };
 
-    let user_detail = db.add_user(data).await;
+    let user_detail: Result<InsertOneResult, Error> = db.add_user(data).await;
 
     match user_detail {
         Ok(user) => {
-            println!("New user added");
+            println!("New user added to the database: {}", db.collection.name());
             Ok(Json(user))
         },
-        Err(_) => Err(Status::InternalServerError),
+        Err(err) => {println!("{}", err); Err(Status::InternalServerError)}
     }
 }
 
 
+/* get_user API Handler using rocket */
+#[get("/<username>")]
+pub async fn get_user_api(db: &State<MongoCollection>, username: String) -> Result<Json<User>, Status> {
 
-
-
-
-
-
-
-/* pub fn get_all_users(&self) -> Result<Vec<User>, Error> {
-    let cursors = self
-        .col
-        .find(None, None)
-        .ok()
-        .expect("Error getting list of users");
-    let users = cursors.map(|doc| doc.unwrap()).collect();
-    Ok(users)
-} */
-
-/* // find_user API Handler
-#[get("/<login>")]
-pub async fn get_user(db: &State<MongoCollection>, login: String) -> Result<Json<User>, Status> {
-
-    println!("{}", login);
-    if login.is_empty() {
+    println!("{}", username);
+    if username.is_empty() {
         return Err(Status::BadRequest);
     };
 
-    let user_detail = db.find_user(&login).await;
+    let user_detail: Result<User, Error> = db.get_user(&username).await;
     match user_detail {
         Ok(user) => Ok(Json(user)),
         Err(error_message) => {
@@ -83,34 +63,4 @@ pub async fn get_user(db: &State<MongoCollection>, login: String) -> Result<Json
             Err(Status::InternalServerError)
         },
     }
-} */
-
-
-
-
-
-
-
-
-
-
-// remove_user API Handler using rocket
-/* #[delete("/user/<login>")]
-pub async fn remove_user(db: &State<MongoCollection>, login: String) -> Result<Json<&str>, Status> {
-
-    if login.is_empty() {
-        return Err(Status::BadRequest);
-    };
-
-    let result = db.remove_user(&login).await;
-    match result {
-        Ok(res) => {
-            if res.deleted_count == 1 {
-                return Ok(Json("User successfully deleted!"));
-            } else {
-                return Err(Status::NotFound);
-            }
-        }
-        Err(_) => Err(Status::InternalServerError),
-    }
-} */
+}

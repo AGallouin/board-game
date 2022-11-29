@@ -2,7 +2,7 @@
 use mongodb::{
     bson::doc, 
     bson::oid::ObjectId,
-    results::{InsertOneResult, DeleteResult},
+    results::InsertOneResult,
     error::Error,
     Client, 
     Collection};
@@ -21,10 +21,11 @@ pub struct MongoLogInfo {
 // The Debug trait added will allow for the println! to use its Display Traits using ":?"
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
-    //#[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    //pub id: Option<ObjectId>,
-    pub login: String,
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
+    pub email: String,
     pub password: String,
+    pub username: String
 }
 
 
@@ -40,22 +41,23 @@ impl MongoCollection {
 
     // Function that initialize properties of the Structure
     // Launch the connection into MongoDB and return a Structure which contains the user defined mongodb::Collection
-    pub async fn get_database(login: &str, password: &str, db_name: &str, collection_name: &str) -> Result<Self, Error> {
+    pub async fn get_database(login: &str, password: &str, database_name: &str, collection_name: &str) -> Result<Self, Error> {
 
-        let connection_url = format!("mongodb+srv://{}:{}@cluster0.cjovhvv.mongodb.net/?retryWrites=true&w=majority", login, password);
-        let client = Client::with_uri_str(connection_url).await;
+        let connection_url: String = format!("mongodb+srv://{}:{}@cluster0.cjovhvv.mongodb.net/?retryWrites=true&w=majority", login, password);
+        let client: Result<Client, Error> = Client::with_uri_str(connection_url).await;
 
         match client {
                 Ok(valid_client) => {
-                    println!("Connected successfully to MongoDB Atlas");
+                    let db = valid_client.database(database_name);
+                    let col: Collection<User> = db.collection(collection_name);
 
-                    let db = valid_client.database(db_name);
-                    let col = db.collection::<User>(collection_name);
-                
-                    //col.insert_one(User {id: None, first_name: "popo".to_string(), last_name: "papa".to_string()}, None).await?;
+                    println!("Connected successfully to MongoDB Atlas");
                     Ok(MongoCollection { collection: col })
             },
-            Err(e) => Err(e),
+            Err(e) => {
+                println!("Error while connecting to mongoDB; receivning the following error: {}", e);
+                Err(e)
+            }
         }
     }
 
@@ -63,13 +65,17 @@ impl MongoCollection {
     // Function to add one User
     pub async fn add_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
 
-        let new_doc = User {
-            //id: None,
-            login: new_user.login,
+        // Create the Struct template that will be serialized from Input
+        let new_doc: User = User {
+            id: None,
+            email: new_user.email,
             password: new_user.password,
+            username: new_user.username
         };
 
-        let result = self
+        println!("Adding the following document to mongoDB collection '{}': {:?}", self.collection.name(), new_doc);
+
+        let result: Result<InsertOneResult, Error> = self
             .collection
             .insert_one(new_doc, None)
             .await;
@@ -78,48 +84,18 @@ impl MongoCollection {
     }
 
 
-/*     // Get all users
-    pub async fn get_all_users(&self) -> Result<Vec<User>, Error> {
+    /* Function to find a specific User */
+    pub async fn get_user(&self, username: &String) -> Result<User, Error> {
 
-        let cursors = self
-            .collection
-            .find(None, None)
-            .await
-            .ok()
-            .expect("Error getting list of users");
+        let filter = doc!{"username": username};
 
-        let users = cursors.map(|doc| doc.unwrap()).collect();
-        Ok(users)
-    } */
-
-
-
-
-    // Function to find a specific User
-/*     pub async fn find_user(&self, login: &String) -> Result<User, Error> {
-
-        let filter = doc!{"login": login};
-
-        let user_detail = self
+        let user_detail: Result<User, Error> = self
             .collection
             .find_one(filter, None)
             .await
             .map(|i| i.unwrap());
 
         user_detail
-    } */
+    }
 
-
-    // Function to remove one User
-/*    pub async fn remove_user(&self, login: &String) -> Result<DeleteResult, Error> {
-
-        let filter = doc!{login};
-
-        let result = self
-            .collection
-            .delete_one(filter, None)
-            .await;
-
-        result
-    } */
 }
