@@ -5,22 +5,23 @@ import { useEffect, useState } from "react"
 export const useFetch = (url: RequestInfo, method='GET') => {
 
     /* Declaring a User structure to match database format */
-    interface User {
+    interface Users {
         email: String,
         username: String,
-        password: String
+        password: String,
+        is_logged_in: Boolean
     }
 
 
     /* Declaring State Object */
     const [isPending, setIsPending] = useState<boolean>(false)
     const [error, setError] = useState<any>(null)
-    const [data, setData] = useState<User>()
+    const [data, setData] = useState<Users>()
     const [options, setOptions] = useState<RequestInit>({}) /* Special type for fetch Options */
 
 
     /* Creating a fetchPostOption function that will create a specific POST Fetch option */
-    const fetchPostOption = (dataToPost: User) => {
+    const fetchPostOption = (dataToPost: Users) => {
         setOptions({
             method: "POST",
             headers: {

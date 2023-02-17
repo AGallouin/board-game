@@ -1,34 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-/* export const useSignup = () => {
-  const [error, setError] = useState(null)
-  const [isPending, setIsPending] = useState(false)
 
-  const signup = async (email, password, displayName) => {
-    setError(null)
-    setIsPending(true)
-  
-    try {
-      // signup
-      const res = await projectAuth.createUserWithEmailAndPassword(email, password)
-      console.log(res.user)
+export const useSignup = (url: RequestInfo) => {
 
-      if (!res) {
-        throw new Error('Could not complete signup')
-      }
-
-      // add display name to user
-      await res.user.updateProfile({ displayName })
-
-      setIsPending(false)
-      setError(null)
-    } 
-    catch(err) {
-      console.log(err.message)
-      setError(err.message)
-      setIsPending(false)
+    /* Declaring a User structure to match database format */
+    interface User {
+        email: string,
+        username: string,
+        password: string,
+        isLoggedIn: boolean
     }
-  }
 
-  return { signup, error, isPending }
-} */
+    const [error, setError] = useState('')
+    const [isPending, setIsPending] = useState(false)
+    const [data, setData] = useState<User>()
+    const [options, setOptions] = useState<RequestInit>({}) /* Special type for fetch Options */
+
+
+    /* Creating a fetchPostOption function that will create a specific POST Fetch option */
+    const fetchPostOption = (dataToPost: User) => {
+        setOptions({
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dataToPost)
+        })
+    }
+
+
+    /* useEffect hook to trigger fetch */
+    useEffect(() => {
+
+        /* Creating a signup function to be called upon user signup */
+        const signup = async (fetchOptions: RequestInit) => {
+
+            setError('')
+            setIsPending(true)
+        
+            const res = await fetch(url, fetchOptions)
+            const outputData = await res.json()
+
+            if (!res.ok) {
+                console.log("Could not fetch data")
+                setError(Object.values(outputData.error).map(x => x).join(', '))
+                setIsPending(false)
+
+            } else {
+                console.log('Data successfully posted')
+                setData(outputData)
+                setError('')
+                setIsPending(false)
+            }
+
+        }
+
+        signup(options)
+
+    }, [url, options])
+
+    
+    return { fetchPostOption, data, isPending, error }
+
+}

@@ -7,4 +7,4 @@ class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=50)
     createdAt = models.DateTimeField(default=utils.timezone.now)
-    is_logged_in = models.BooleanField(default=False)
+    isLoggedIn = models.BooleanField(default=False)

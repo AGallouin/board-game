@@ -1,8 +1,9 @@
 /* Base */
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 /* Hook */
-import { useFetch } from '../../hooks/useFetch'
+import { useSignup } from '../../hooks/useSignup'
 
 
 export default function Signup() {
@@ -11,21 +12,24 @@ export default function Signup() {
     const [email, setEmail] = useState<string>('')
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
     const [url, setUrl] = useState<RequestInfo>('http://localhost:8000/')
-    const [method, setMethod] = useState<string>('GET')
 
-    const { fetchPostOption, data, isPending, error } = useFetch(url, method)
+    const { fetchPostOption, data, isPending, error } = useSignup(url)
 
+    const navigate = useNavigate()
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
-
-        setMethod('POST')
         setUrl('http://localhost:8000/')
-        fetchPostOption({email, username, password})
-        console.log(isPending)
-        console.log(error)
+        setIsLoggedIn(true)
+        fetchPostOption({email, username, password, isLoggedIn})
+
+        if (error != '') {
+            navigate('/')
+        }
+        
     }
 
     return (
@@ -58,7 +62,7 @@ export default function Signup() {
                 />
             </label>
             
-            {/* { error && <p>{error}</p> } */}
+            { (error != '') && <p>{error}</p> }
             { isPending && <button className='btn' disabled>Loading</button> }
             { !isPending && <button>Sign up</button> }
 
