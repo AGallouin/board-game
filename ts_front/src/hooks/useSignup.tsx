@@ -11,7 +11,7 @@ export const useSignup = (url: RequestInfo) => {
         isLoggedIn: boolean
     }
 
-    const [error, setError] = useState('')
+    const [error, setError] = useState<string>('')
     const [isPending, setIsPending] = useState(false)
     const [data, setData] = useState<User>()
     const [options, setOptions] = useState<RequestInit>({}) /* Special type for fetch Options */
@@ -42,7 +42,8 @@ export const useSignup = (url: RequestInfo) => {
             const outputData = await res.json()
 
             if (!res.ok) {
-                console.log("Could not fetch data")
+                console.log("Could not POST data")
+                console.log(outputData.error)
                 setError(Object.values(outputData.error).map(x => x).join(', '))
                 setIsPending(false)
 

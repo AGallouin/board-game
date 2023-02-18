@@ -1,5 +1,5 @@
 /* Base */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 /* Hook */
@@ -20,17 +20,23 @@ export default function Signup() {
     const navigate = useNavigate()
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-
         e.preventDefault()
         setUrl('http://localhost:8000/')
         setIsLoggedIn(true)
+    }
+
+
+    useEffect(() => {
         fetchPostOption({email, username, password, isLoggedIn})
 
-        if (error != '') {
+        if (data) {
+            console.log("Ici")
+            console.log(data)
+            console.log("No error!")
             navigate('/')
         }
-        
-    }
+    }, [isLoggedIn, data])
+
 
     return (
         <form onSubmit={handleSubmit}>

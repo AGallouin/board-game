@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 /* Hook */
-import { useFetch } from '../../hooks/useFetch'
+
 
 
 export default function Login() {
@@ -13,7 +13,7 @@ export default function Login() {
     const [username, setUsername] = useState<string>('')
     const [url, setUrl] = useState<RequestInfo>('http://localhost:8000/')
     const [error, setError] = useState<any>(null)
-    const { data, isPending } = useFetch(url)
+
     const navigate = useNavigate()
 
     /* Declaring Event handler */
