@@ -13,30 +13,18 @@ export default function Signup() {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-    const [url, setUrl] = useState<RequestInfo>('http://localhost:8000/')
 
-    const { fetchPostOption, data, isPending, error } = useSignup(url)
+    const { login, data, isPending, error } = useSignup('http://localhost:8000/');
 
     const navigate = useNavigate()
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setUrl('http://localhost:8000/')
+        await login({email, username, password, isLoggedIn})
+
+        navigate('/')
         setIsLoggedIn(true)
     }
-
-
-    useEffect(() => {
-        fetchPostOption({email, username, password, isLoggedIn})
-
-        if (data) {
-            console.log("Ici")
-            console.log(data)
-            console.log("No error!")
-            navigate('/')
-        }
-    }, [isLoggedIn, data])
-
 
     return (
         <form onSubmit={handleSubmit}>
