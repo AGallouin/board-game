@@ -8,7 +8,7 @@ from rest_framework import status
 
 
 # Create your views here.
-class UserView(APIView):
+class SignupView(APIView):
 
     def get(self, request, format=None):
 

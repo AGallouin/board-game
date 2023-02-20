@@ -1,9 +1,11 @@
 /* Base */
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
-/* Hook */
-import { useSignup } from '../../hooks/useSignup'
+/* Authentication Context */
+import { useAuthContext } from '../../hooks/useAuthContext'
+import { doLogin } from '../../contexts/AuthContext'
 
 
 export default function Signup() {
@@ -12,18 +14,47 @@ export default function Signup() {
     const [email, setEmail] = useState<string>('')
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+    const [error, setError] = useState<string>('')
 
-    const { login, data, isPending, error } = useSignup('http://localhost:8000/');
+    const { dispatch } = useAuthContext()
+
+    const url = 'http://localhost:8000/signup'
 
     const navigate = useNavigate()
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        await login({email, username, password, isLoggedIn})
 
-        navigate('/')
-        setIsLoggedIn(true)
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault()
+
+        axios.post(url, {email, username, password})
+            .then((res) => {
+
+                console.log('Login successful!')
+                console.log('Response:,', res)
+
+                dispatch(doLogin(username))
+                navigate('/')
+
+            })
+            .catch(function (err) {
+                if (err.response) {
+                    /* The request was made and the server responded with a status code that falls out of the range of 2xx */
+                    setError(err)
+                    console.log(err.response.data)
+
+                } else if (err.request) {
+                    /* The request was made but no response was received */
+                    setError(err.request)
+                    console.log(err.request)
+
+                } else {
+                    /* Something happened in setting up the request that triggered an Error */
+                    setError(err.message)
+                    console.log('Error', err.message);
+                }
+                console.log(err.config);
+            });
     }
 
     return (
@@ -56,9 +87,8 @@ export default function Signup() {
                 />
             </label>
             
+            <button>Sign up</button>
             { (error != '') && <p>{error}</p> }
-            { isPending && <button className='btn' disabled>Loading</button> }
-            { !isPending && <button>Sign up</button> }
 
         </form>
     )
