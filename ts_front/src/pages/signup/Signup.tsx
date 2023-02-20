@@ -37,23 +37,23 @@ export default function Signup() {
                 navigate('/')
 
             })
-            .catch(function (err) {
+            .catch((err) => {
                 if (err.response) {
                     /* The request was made and the server responded with a status code that falls out of the range of 2xx */
-                    setError(err)
-                    console.log(err.response.data)
+                    console.log(Object.values(err.response.data.error).join(', '))
+                    setError(Object.values(err.response.data.error).join(', '))
 
                 } else if (err.request) {
                     /* The request was made but no response was received */
-                    setError(err.request)
                     console.log(err.request)
+                    setError(err.request)
 
                 } else {
                     /* Something happened in setting up the request that triggered an Error */
+                    console.log(err.message)
                     setError(err.message)
-                    console.log('Error', err.message);
                 }
-                console.log(err.config);
+                console.log(err.config)
             });
     }
 

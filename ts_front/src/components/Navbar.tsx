@@ -27,7 +27,6 @@ export default function Navbar() {
                 <ul>
                 { state.username && 
                     <>
-                        <li> <Link to="/">Home</Link> </li>
                         <button onClick={ handleClick }>Logout</button>
                     </> 
                 }

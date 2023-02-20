@@ -1,26 +1,28 @@
 from django.shortcuts import render
-from django.http import JsonResponse, Http404
-from .models import User
-from .serializers import UserSerializer
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
+from .models import User
+from .serializers import SignupSerializer, LoginSerializer
+from .exceptions import CustomException
 
-# Create your views here.
+
+
 class SignupView(APIView):
 
     def get(self, request, format=None):
 
         user_info = User.objects.all()
-        serializer = UserSerializer(user_info, many=True)
+        serializer = SignupSerializer(user_info, many=True)
     
         return JsonResponse(serializer.data, safe=False)
 
 
     def post(self, request, format=None):
 
-        serializer = UserSerializer(data=request.data)
+        serializer = SignupSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -30,17 +32,30 @@ class SignupView(APIView):
     
 
 
-class UserDetailView(APIView):
+class LoginView(APIView):
     
-    def get_object(self, pk):
-        try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
+    def post(self, request, format=None):
 
-    def get(self, request, pk):
+        serializer = LoginSerializer(data=request.data)
 
-        user_info = self.get_object(pk)
-        serializer = UserSerializer(user_info)
+        if serializer.is_valid():
+            username = request.data.get('username')
+            password = request.data.get('password')
 
-        return JsonResponse(serializer.data)
+            # Query in User DB
+            userQuery = User.objects.filter(username=username)
+            passwordQuery = User.objects.filter(password=password)
+            
+            # Validation check
+            if userQuery.exists() & passwordQuery.exists():
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                if not userQuery.exists():
+                    error_detail = {"error": {"username": "User do not exist"}}
+                    
+                elif not passwordQuery.exists():
+                    error_detail = {"error": {"password": "Wrong password"}}
+
+                raise CustomException(error_detail, 401)
+        
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
