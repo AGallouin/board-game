@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { Button, Form } from 'react-bootstrap'
 
 /* Authentication Context */
 import { useAuthContext } from '../../hooks/useAuthContext'
@@ -10,7 +11,7 @@ import { doLogin } from '../../contexts/AuthContext'
 
 export default function Login() {
 
-    /* Declaring State Object */
+    /* Declaring State Object and Constant variables */
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string>('')
@@ -21,6 +22,7 @@ export default function Login() {
 
     const navigate = useNavigate()
 
+
     /* Declaring Event handler */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -30,7 +32,7 @@ export default function Login() {
             .then((res) => {
 
                 console.log('Login successful!')
-                console.log('Response:,', res)
+                console.log('Response:', res)
 
                 dispatch(doLogin(username))
                 navigate('/')
@@ -59,27 +61,33 @@ export default function Login() {
     
     /* Render */
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                <span>User name:</span>
-                <input
-                    required 
-                    type="text"
+        <Form onSubmit={handleSubmit}>
+            
+            <Form.Group className="login_form_username">
+                <Form.Label>User username:</Form.Label>
+                <Form.Control 
+                    type="text" 
+                    placeholder='Enter username'
                     onChange={(e) => setUsername(e.target.value)}
                     value={username}
                 />
-            </label>
-            <label>
-                <span>User password:</span>
-                <input
-                    required 
-                    type="password"
+            </Form.Group>
+
+            <Form.Group className="login_form_password">
+                <Form.Label>User password:</Form.Label>
+                <Form.Control 
+                    type="password" 
+                    placeholder='Enter password'
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                 />
-            </label>
-            <button>Log in</button>
+            </Form.Group>
+            
+
+            <Button variant='primary' type="submit">Login</Button>
+
             { error != '' && <p>{ error }</p>}
-        </form>
+
+        </Form>
     )
 }

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { Button, Form, InputGroup } from 'react-bootstrap'
 
 /* Authentication Context */
 import { useAuthContext } from '../../hooks/useAuthContext'
@@ -10,7 +11,7 @@ import { doLogin } from '../../contexts/AuthContext'
 
 export default function Signup() {
 
-    /* Declaring State Object */
+    /* Declaring State Object and Constant variables */
     const [email, setEmail] = useState<string>('')
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
@@ -23,15 +24,17 @@ export default function Signup() {
     const navigate = useNavigate()
 
 
+    /* Declaring Event handler */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
-
+        
+        console.log(email, username, password)
         axios.post(url, {email, username, password})
             .then((res) => {
 
                 console.log('Login successful!')
-                console.log('Response:,', res)
+                console.log('Response:', res)
 
                 dispatch(doLogin(username))
                 navigate('/')
@@ -57,39 +60,45 @@ export default function Signup() {
             });
     }
 
+    /* Render */
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                <span>User email:</span>
-                <input
-                    required 
-                    type="email"
+        <Form onSubmit={handleSubmit}>
+            <Form.Label>User email:</Form.Label>
+            <InputGroup className="signup_form_email">
+                <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
+                <Form.Control 
+                    type="email" 
+                    placeholder='Enter email'
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                 />
-            </label>
-            <label>
-                <span>User name:</span>
-                <input
-                    required 
-                    type="text"
+            </InputGroup>
+
+            
+            <Form.Group className="signup_form_username">
+                <Form.Label>User username:</Form.Label>
+                <Form.Control 
+                    type="text" 
+                    placeholder='Enter username'
                     onChange={(e) => setUsername(e.target.value)}
                     value={username}
                 />
-            </label>
-            <label>
-                <span>User password:</span>
-                <input
-                    required 
-                    type="password"
+            </Form.Group>
+
+            <Form.Group className="signup_form_password">
+                <Form.Label>User password:</Form.Label>
+                <Form.Control 
+                    type="password" 
+                    placeholder='Enter password'
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                 />
-            </label>
+            </Form.Group>
             
-            <button>Sign up</button>
+            <Button variant='primary' type="submit">Sign up</Button>
+
             { (error != '') && <p>{error}</p> }
 
-        </form>
+        </Form>
     )
 }

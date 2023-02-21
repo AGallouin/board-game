@@ -2,17 +2,18 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { doLogout } from '../contexts/AuthContext'
 import { useAuthContext } from '../hooks/useAuthContext'
-
-/* Styles */
-import './Navbar.css'
+import { Nav, Navbar, Button } from 'react-bootstrap'
 
 
-export default function Navbar() {
+export default function NavigationBar() {
 
+    /* Declaring State Object and Constant variables */
     const { state, dispatch } = useAuthContext()
 
     const navigate = useNavigate()
 
+
+    /* Declaring Event handler */
     const handleClick = () => {
 
         console.log('Logout successful!')
@@ -21,24 +22,27 @@ export default function Navbar() {
         navigate('/login')
     }
 
+
+    /* Render */
     return (
         <div className="navbar">
-            <nav>
-                <ul>
+            <Navbar bg="light" variant="light">
+                <Navbar.Brand>Board Game</Navbar.Brand>
+                <Nav className="me-auto">
+
                 { state.username && 
                     <>
-                        <button onClick={ handleClick }>Logout</button>
+                        <Button variant='primary' onClick={handleClick}>Logout</Button>
                     </> 
                 }
                 { !state.username && 
                     <>
-                        <li> <Link to="/signup">Sign up</Link> </li>
-                        <li> <Link to="/login">Login</Link> </li>
+                        <Nav.Link href="signup">Signup</Nav.Link>
+                        <Nav.Link href="login">Login</Nav.Link>
                     </>
                 }
-                </ul>
-            </nav>
-            
+                </Nav>
+            </Navbar>
         </div>
     )
 }
