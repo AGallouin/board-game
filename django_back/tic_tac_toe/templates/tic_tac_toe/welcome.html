@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Welcome to the Tic Tac Toe Game page</title>
+</head>
+
+
+<body>
+    <h1>Game chooser</h1>
+    <h1>Test</h1>
+    <script type="text/javasccript">
+        
+        console.log('Salut')
+
+        let url = `ws://${window.location.host}/ws/socket-server/`
+
+        console.log(url)
+
+        const chatSocket = new WebSocket(url)
+
+        chatSocket.onmessage = function(e){
+            let data = JSON.parse(e.data)
+            console.log('Data:', data)
+        }
+    </script>
+
+</body>
+
+</html>

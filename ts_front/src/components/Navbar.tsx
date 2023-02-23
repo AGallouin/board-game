@@ -1,5 +1,5 @@
 /* Base */
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { doLogout } from '../contexts/AuthContext'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Nav, Navbar, Button } from 'react-bootstrap'

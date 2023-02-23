@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_handler.apps.UserHandlerConfig',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'tic_tac_toe'
 ]
 
 MIDDLEWARE = [
@@ -142,3 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'user_handler.exceptions.custom_exception_handler'
 }
+
+
+# Channels
+ASGI_APPLICATION = "django_back.asgi.application"

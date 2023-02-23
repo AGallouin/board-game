@@ -1,4 +1,9 @@
-import { useAuthContext } from "../../hooks/useAuthContext"
+/* Base */
+import { Link } from "react-router-dom";
+
+/* Context */
+import { useAuthContext } from "../../hooks/useAuthContext";
+
 
 export default function Home() {
 
@@ -8,6 +13,7 @@ export default function Home() {
         <div>
             <h2>Welcome { state.username } !</h2>
             <p>Available Board Game</p>
+                <Link to="/tictactoe">Tic Tac Toe</Link>
         </div>
     )
 }
