@@ -1,29 +1,33 @@
-<!DOCTYPE html>
-
 <html>
 
 <head>
-    <title>Welcome to the Tic Tac Toe Game page</title>
+    <title>Tic Tac Toe</title>
 </head>
 
 
 <body>
     <h1>Game chooser</h1>
     <h1>Test</h1>
-    <script type="text/javasccript">
+
+    <div id="user-hello"></div>
+
+    {{game_id|json_script:"game_id"}}
+
+    <script>
         
-        console.log('Salut')
+        const gameId = JSON.parse(document.getElementById('game_id').textContent);
 
-        let url = `ws://${window.location.host}/ws/socket-server/`
+        let url = 'ws://' + window.location.host + '/ws/tictactoe/' + gameId + '/';
 
-        console.log(url)
+        const chatSocket = new WebSocket(url);
 
-        const chatSocket = new WebSocket(url)
+        chatSocket.onmessage = function (e) {
 
-        chatSocket.onmessage = function(e){
-            let data = JSON.parse(e.data)
+            const data = JSON.parse(e.data)
             console.log('Data:', data)
-        }
+            document.querySelector('#user-hello').innerHTML = (data.tester)
+        };
+
     </script>
 
 </body>

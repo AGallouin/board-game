@@ -19,7 +19,7 @@ export default function Signup() {
 
     const { dispatch } = useAuthContext()
 
-    const url = 'http://localhost:8000/signup'
+    const url = 'http://localhost:8000/user/signup'
 
     const navigate = useNavigate()
 

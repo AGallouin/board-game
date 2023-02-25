@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'django_back.urls'
+ROOT_URLCONF = 'core.urls'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
@@ -79,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_back.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # Database
@@ -147,4 +147,10 @@ REST_FRAMEWORK = {
 
 
 # Channels
-ASGI_APPLICATION = "django_back.asgi.application"
+ASGI_APPLICATION = "core.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}

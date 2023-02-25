@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .classes import *
-
+import tic_tac_toe.routing
 
 
 class TicTacToeView(APIView):
@@ -16,5 +16,8 @@ class TicTacToeView(APIView):
         return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST) """
 
 
-def test(request):
-    return render(request, 'tic_tac_toe/welcome.html')
+def test(request, game_id):
+    print(tic_tac_toe.routing.websocket_urlpatterns)
+    return render(request, 'tic_tac_toe/welcome.html', {
+        'game_id': game_id
+    })
