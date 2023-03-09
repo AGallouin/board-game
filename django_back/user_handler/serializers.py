@@ -5,7 +5,7 @@ from .models import User
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'username', 'password')
+        fields = ("email", "username", "password")
 
 
 class LoginSerializer(serializers.Serializer):
@@ -14,7 +14,7 @@ class LoginSerializer(serializers.Serializer):
     
     class Meta:
         model = User
-        fields = ('password')
+        fields = ("password")
     
     def create(self, validated_data):
         return User.objects.get_or_create(**validated_data)

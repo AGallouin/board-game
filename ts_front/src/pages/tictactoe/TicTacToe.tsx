@@ -3,6 +3,8 @@ import axios from 'axios'
 
 import './TicTacToe.css'
 
+/* Context */
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 type SquareProp = {
     squareId: number,
@@ -12,18 +14,41 @@ type SquareProp = {
 
 export function Square( {squareId, squareValue}: SquareProp )  {
 
-    const url = 'http://localhost:8000/tictactoe'
+    const { state } = useAuthContext()
+    const [error, setError] = useState<string>("")
+    const url = 'http://localhost:8000/tictactoe/1'
 
-    const handleClick = () => {
+
+    const handleClick = () => {       
+
+        const username: string | null = state.username
 
         console.log(squareId)
         console.log(squareValue)
-        axios.post(url, { squareId })
-            .then((res) => {
+        console.log(username)
 
+        axios.post(url, { squareId, username })
+            .then((res) => {
+                console.log('Login successful!')
+                console.log('Response:', res)
             })
             .catch((err) => {
+                if (err.response) {
+                    /* The request was made and the server responded with a status code that falls out of the range of 2xx */
+                    console.log(Object.values(err.response.data.error).join(', '))
+                    setError(Object.values(err.response.data.error).join(', '))
 
+                } else if (err.request) {
+                    /* The request was made but no response was received */
+                    console.log(err.request)
+                    setError(err.request)
+
+                } else {
+                    /* Something happened in setting up the request that triggered an Error */
+                    console.log(err.message)
+                    setError(err.message)
+                }
+                console.log(err.config)
             })
     }
 
@@ -61,6 +86,8 @@ export function Board() {
 
 
 export default function TicTacToe() {
+
+    
 
     return ( 
         <Board />

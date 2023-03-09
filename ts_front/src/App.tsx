@@ -10,6 +10,7 @@ import TicTacToe from './pages/tictactoe/TicTacToe';
 
 /* Styles */
 import './App.css';
+import Lobby from './pages/tictactoe/Lobby';
 
 
 
@@ -22,9 +23,10 @@ function App() {
                 <NavigationBar />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                        <Route path = "/tictactoe" element={<TicTacToe />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/login" element={<Login />} />
+                        <Route path="signup" element={<Signup />} />
+                        <Route path="login" element={<Login />} />
+                        <Route path="tictactoe/" element={<Lobby />} />
+                        <Route path="tictactoe/:id/" element={<TicTacToe />} />
                 </Routes>
             </BrowserRouter>
 
