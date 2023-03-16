@@ -35,6 +35,7 @@ export default function Login() {
                 console.log('Response:', res)
 
                 dispatch(doLogin(username))
+                sessionStorage.setItem("sessionName", username)
                 navigate('/')
 
             })

@@ -9,8 +9,9 @@ type contextState = {
 };
 
 export const initialState: contextState = {
-    username: null,
+    username: sessionStorage.getItem("sessionName"),
 };
+
 
 /* I.1.B. Dispatch Types */
 enum AuthType {
@@ -27,6 +28,7 @@ type LogoutAction = {
     type: typeof AuthType.LOGOUT
 }
 
+
 /* I.1.C. Action Types */
 type AuthAction = LoginAction | LogoutAction 
 
@@ -38,6 +40,7 @@ export const doLogin = (username: string): AuthAction => ({
 export const doLogout = (): AuthAction => ({
     type: AuthType.LOGOUT,
 })
+
 
 
 /* II. Reducer */
@@ -61,6 +64,7 @@ export const AuthContext = createContext<{
 }>({ 
     state: initialState, dispatch: () => null 
 })
+
 
 export const AuthContextProvider = ({ children }: any) => {
 

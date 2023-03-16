@@ -1,6 +1,9 @@
 /* Base */
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+/* Hooks */
+import { useAuthContext } from './hooks/useAuthContext';
+
 /* Pages & Components */
 import NavigationBar from './components/Navbar';
 import Home from './pages/home/Home';
@@ -15,18 +18,28 @@ import Lobby from './pages/tictactoe/Lobby';
 
 
 function App() {
-    
+
+    const { state } = useAuthContext()
+
     return (
         <div className="App">
 
             <BrowserRouter>
                 <NavigationBar />
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                        <Route path="signup" element={<Signup />} />
-                        <Route path="login" element={<Login />} />
-                        <Route path="tictactoe/" element={<Lobby />} />
-                        <Route path="tictactoe/:id/" element={<TicTacToe />} />
+                    { state.username && 
+                        <>
+                            <Route path="" element={<Home />} />
+                        </>
+                    }
+                    { !state.username && 
+                        <>
+                            <Route path="signup" element={<Signup />} />
+                            <Route path="login" element={<Login />} />
+                        </>
+                    }
+                    <Route path="tictactoe/lobby/:username" element={<Lobby />} />
+                    <Route path="tictactoe/:id" element={<TicTacToe />} />
                 </Routes>
             </BrowserRouter>
 

@@ -29,7 +29,6 @@ export default function Signup() {
 
         e.preventDefault()
         
-        console.log(email, username, password)
         axios.post(url, {email, username, password})
             .then((res) => {
 
@@ -37,6 +36,7 @@ export default function Signup() {
                 console.log('Response:', res)
 
                 dispatch(doLogin(username))
+                sessionStorage.setItem("sessionName", username)
                 navigate('/')
 
             })

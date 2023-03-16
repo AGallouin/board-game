@@ -13,7 +13,7 @@ export default function Home() {
         <div>
             <h2>Welcome { state.username } !</h2>
             <p>Available Board Game</p>
-                <Link to="/tictactoe">Tic Tac Toe</Link>
+                <Link to={`/tictactoe/lobby/${state.username}`}>Tic Tac Toe</Link>
         </div>
     )
 }

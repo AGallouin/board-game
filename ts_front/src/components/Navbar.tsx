@@ -19,6 +19,7 @@ export default function NavigationBar() {
         console.log('Logout successful!')
 
         dispatch(doLogout())
+        sessionStorage.removeItem("sessionName")
         navigate('/login')
     }
 
