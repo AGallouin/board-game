@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,7 +15,7 @@ from user_handler.models import User
 class LobbyView(APIView):
 
     def get(self, request, username):
-        available_games: dict[str, dict[int, str]] = {"available_games": [{ "id": game.pk, "created_by": game.creator.username } for game in Game.get_available_game()]}
+        available_games: dict[str, dict[int, str]] = {"available_games": [{ "id": game.pk, "created_by": game.creator.username } for game in Game.get_available_game(username)]}
         available_games["unfinished_games"] = [{ "id": game.pk, "created_by": game.creator.username } for game in Game.get_unfinished_player_involved_game(username)]
         return JsonResponse(available_games)
 

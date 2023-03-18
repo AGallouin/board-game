@@ -4,23 +4,46 @@ import { doLogout } from '../contexts/AuthContext'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Nav, Navbar, Button } from 'react-bootstrap'
 
+/* Web */
+import axios from 'axios'
+
 
 export default function NavigationBar() {
 
     /* Declaring State Object and Constant variables */
     const { state, dispatch } = useAuthContext()
-
+    const url = "http://localhost:8000/user/logout"
     const navigate = useNavigate()
 
 
     /* Declaring Event handler */
     const handleClick = () => {
 
-        console.log('Logout successful!')
+        axios.post(url, {username: state.username})
+            .then((res) => {
+                console.log(res)
+                console.log('Logout successful!')
 
-        dispatch(doLogout())
-        sessionStorage.removeItem("sessionName")
-        navigate('/login')
+                dispatch(doLogout())
+                sessionStorage.removeItem("sessionName")
+                navigate('/login')
+            })
+            .catch((err) => {
+                if (err.response) {
+                    /* The request was made and the server responded with a status code that falls out of the range of 2xx */
+                    console.log(Object.values(err.response.data.error).join(', '))
+
+                } else if (err.request) {
+                    /* The request was made but no response was received */
+                    console.log(err.request)
+
+                } else {
+                    /* Something happened in setting up the request that triggered an Error */
+                    console.log(err.message)
+                }
+                console.log(err.config)
+            });
+
     }
 
 

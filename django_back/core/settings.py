@@ -87,7 +87,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': env("DB_NAME"),
         'USER': env("DB_USER"),
         'PASSWORD': env("DB_PASSWORD"),
@@ -95,6 +95,14 @@ DATABASES = {
         'PORT': env("DB_PORT"),
     }
 }
+
+
+# Custom User model
+AUTH_USER_MODEL = "user_handler.User"
+
+
+# Custom Authentication
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 
 # Password validation

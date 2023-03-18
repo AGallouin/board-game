@@ -9,7 +9,7 @@ import NavigationBar from './components/Navbar';
 import Home from './pages/home/Home';
 import Signup from './pages/signup/Signup';
 import Login from './pages/login/Login';
-import TicTacToe from './pages/tictactoe/TicTacToe';
+import Tictactoe from './pages/tictactoe/Tictactoe';
 
 /* Styles */
 import './App.css';
@@ -39,7 +39,7 @@ function App() {
                         </>
                     }
                     <Route path="tictactoe/lobby/:username" element={<Lobby />} />
-                    <Route path="tictactoe/:id" element={<TicTacToe />} />
+                    <Route path="tictactoe/:id" element={<Tictactoe />} />
                 </Routes>
             </BrowserRouter>
 
