@@ -1,9 +1,18 @@
+/* Base */
 import React, { useState, useEffect } from 'react'
-import { Button, Form } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
+
+/* Hooks */
 import { useAuthContext } from '../../hooks/useAuthContext'
+
+/* Web */
 import axios from 'axios'
 
+/* Bootstrap */
+import { Button, Form, Container, Row, Col, Card, ListGroup, Modal } from 'react-bootstrap'
+
+/* Styling */
+import "./Lobby.css"
 
 
 export default function Lobby() {
@@ -13,33 +22,10 @@ export default function Lobby() {
     const navigate = useNavigate()
     const [ availableGames, setAvailableGames ] = useState<any>([])
     const [ unfinishedGames, setUnfinishedGames ] = useState<any>([])
+    const [ error, setError ] = useState<string>("")
+    const [ showError, setShowError ] = useState<boolean>(false)
 
     const url = "http://localhost:8000/tictactoe/lobby/" + state.username
-
-
-    const handleClick = (e:React.MouseEvent<HTMLButtonElement>, id: number, username: string | null) => {
-
-        axios.post(url, { board_size: boardSize, username, id, method: "join" })
-            .then((res) => {
-                console.log(res)
-                navigate(`/tictactoe/${id}`)
-            })
-            .catch((err) => {
-                if (err.response) {
-                    /* The request was made and the server responded with a status code that falls out of the range of 2xx */
-                    console.log(Object.values(err.response.data.error).join(', '))
-
-                } else if (err.request) {
-                    /* The request was made but no response was received */
-                    console.log(err.request)
-
-                } else {
-                    /* Something happened in setting up the request that triggered an Error */
-                    console.log(err.message)
-                }
-                console.log(err.config)
-            });
-    }
 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>, username: string | null) => {
@@ -52,23 +38,57 @@ export default function Lobby() {
                 navigate(`/tictactoe/${res.data.game_id}`)
             })
             .catch((err) => {
+                setShowError(true)
                 if (err.response) {
                     /* The request was made and the server responded with a status code that falls out of the range of 2xx */
-                    console.log(Object.values(err.response.data.error).join(', '))
+                    console.log(err.response)
+                    setError(err.response.data.error.board_size)
 
                 } else if (err.request) {
                     /* The request was made but no response was received */
-                    console.log(2)
                     console.log(err.request)
+                    setError(err.request)
 
                 } else {
                     /* Something happened in setting up the request that triggered an Error */
-                    console.log(3)
                     console.log(err.message)
+                    setError(err.message)
                 }
                 console.log(err.config)
-            });
-        
+            }
+        )
+    }
+
+
+    const handleJoinGame = (e: React.MouseEvent<Element, MouseEvent>, id: number, username: string | null) => {
+
+        e.preventDefault()
+
+        axios.post(url, { board_size: boardSize, username, id, method: "join" })
+            .then((res) => {
+                console.log(res)
+                navigate(`/tictactoe/${id}`)
+            })
+            .catch((err) => {
+                setShowError(true)
+                if (err.response) {
+                    /* The request was made and the server responded with a status code that falls out of the range of 2xx */
+                    console.log(err.response)
+                    setError(err.response.data.error.board_size)
+
+                } else if (err.request) {
+                    /* The request was made but no response was received */
+                    console.log(err.request)
+                    setError(err.request)
+
+                } else {
+                    /* Something happened in setting up the request that triggered an Error */
+                    console.log(err.message)
+                    setError(err.message)
+                }
+                console.log(err.config)
+            }
+        )
     }
 
 
@@ -86,49 +106,70 @@ export default function Lobby() {
 
 
     return (
-        <div>
-        
-            <div className='available_tictactoe_game'>
-                { availableGames.length === 0 && <h2>No Available Game</h2> }
-                { availableGames.length > 0 && 
-                    <div>
-                        <h2>Available Game:</h2>
-                        { availableGames.map((game: any, i: number) => 
-                            <Link to={`/tictactoe/${game.id}`} key={i}>
-                                <Button onClick={ (e) => handleClick(e, game.id, state.username) }>Join Game</Button>
-                            </Link>
-                        )}
-                    </div>
-                }                
-            </div>
-
-            <div className='available_tictactoe_game'>
-                { unfinishedGames.length > 0 && 
-                    <div>
-                        <h2>Your Unfinished Game:</h2>
-                        { unfinishedGames.map((game: any, i: number) => 
-                            <Link to={`/tictactoe/${game.id}`} key={i}>
-                                <Button onClick={ (e) => handleClick(e, game.id, state.username) }>Let's finish it</Button>
-                            </Link>
-                        )}
-                    </div>
-                }                
-            </div>
-
-            <Form onSubmit={ (e) => handleSubmit(e, state.username) }>
-                <Form.Group className='form'>
-                    <Form.Label>Board Dimension (from 3 to 5):</Form.Label>
-                    <Form.Control 
-                        type="number"
-                        placeholder='Board Dimension'
-                        min={3}
-                        max={5}
-                        onChange={(e) => setBoardSize(e.target.value)}
-                        value={boardSize}
-                    />
-                </Form.Group>
-                <Button type='submit'>Create New Game</Button>
-            </Form>
-        </div>
+        <Container fluid className="tictactoe_lobby">
+            <Row>
+                <Col>
+                    <Card className="create_card">
+                        <Card.Header>Create new game</Card.Header>
+                        <Card.Body>
+                            <Form onSubmit={ (e) => handleSubmit(e, state.username) }>
+                                <Form.Group className='create_form'>
+                                    <Form.Label>Board Dimension (from 3 to 5):</Form.Label>
+                                    <Form.Control 
+                                        type="number"
+                                        placeholder='Board Dimension'
+                                        min={3}
+                                        max={5}
+                                        onChange={(e) => setBoardSize(e.target.value)}
+                                        value={boardSize}
+                                    />
+                                </Form.Group>
+                                <Button className="create_button" type='submit'>Create New Game</Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>   
+                </Col>
+                <Col>
+                    <Card className="lobby_card">
+                        <Card.Header>Available Games</Card.Header>
+                        <Card.Body className="scroll">
+                            { availableGames.length === 0 && <p>No available games</p> }
+                            { availableGames.length > 0 && 
+                                <ListGroup>
+                                    { availableGames.map((game: any, i: number) => 
+                                        <ListGroup.Item className="lobby_card_list_item" action onClick={(e) => handleJoinGame(e, game.id, state.username)} key={i}>
+                                            {game.id}. Creator: {game.created_by}
+                                        </ListGroup.Item>
+                                    )}
+                                </ListGroup>
+                            }     
+                        </Card.Body>
+                    </Card>
+                    <Card className="lobby_card">
+                        <Card.Header>Unfinished Games</Card.Header>
+                        <Card.Body className="scroll">
+                            { unfinishedGames.length === 0 && <p>No unfinished games</p> }
+                            { unfinishedGames.length > 0 && 
+                                <ListGroup>
+                                    { unfinishedGames.map((game: any, i: number) => 
+                                        <ListGroup.Item className="lobby_card_list_item" action onClick={(e) => handleJoinGame(e, game.id, state.username)} key={i}>
+                                            {game.id}. Creator: {game.created_by}
+                                        </ListGroup.Item>
+                                    )}
+                                </ListGroup>
+                        }      
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+            <Modal className="error_modal" show={showError} onHide={() => setShowError(false)}>
+                <Modal.Header>Error<button className="error_modal_close" onClick={()=>setShowError(false)}>X</button></Modal.Header>
+                <Modal.Body>
+                    <>
+                        { "Board dimension: " + error }
+                    </>
+                </Modal.Body>
+            </Modal>
+        </Container>
     )
 }

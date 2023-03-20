@@ -1,0 +1,15 @@
+.navbar {
+    width: 100%;
+    font-size: 20px;
+}
+
+.navbar-brand {
+    font-size: 25px !important;
+}
+
+.logout_button {
+    position: relative;
+    right: -450%;
+    background-color: #04496b !important;
+    border-color: #04496b !important;
+}

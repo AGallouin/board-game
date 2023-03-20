@@ -1,5 +1,5 @@
 /* Base */
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 /* Hooks */
 import { useAuthContext } from './hooks/useAuthContext';
@@ -15,31 +15,23 @@ import Tictactoe from './pages/tictactoe/Tictactoe';
 import './App.css';
 import Lobby from './pages/tictactoe/Lobby';
 
-
-
 function App() {
 
     const { state } = useAuthContext()
 
     return (
         <div className="App">
-
+            
             <BrowserRouter>
-                <NavigationBar />
+
+                { state.username && <NavigationBar /> }
+
                 <Routes>
-                    { state.username && 
-                        <>
-                            <Route path="" element={<Home />} />
-                        </>
-                    }
-                    { !state.username && 
-                        <>
-                            <Route path="signup" element={<Signup />} />
-                            <Route path="login" element={<Login />} />
-                        </>
-                    }
-                    <Route path="tictactoe/lobby/:username" element={<Lobby />} />
-                    <Route path="tictactoe/:id" element={<Tictactoe />} />
+                    <Route path="/" element={ state.username ? <Home /> : <Navigate to="/login"/> } />
+                    <Route path="/signup" element={ !state.username ? <Signup /> : <Navigate to="/"/> } />
+                    <Route path="/login" element={ !state.username ? <Login /> : <Navigate to="/"/> } />
+                    <Route path="/tictactoe/lobby/:username" element={ state.username ? <Lobby /> : <Navigate to="/login"/> } />
+                    <Route path="/tictactoe/:id" element={ state.username ? <Tictactoe /> : <Navigate to="/login"/> } />
                 </Routes>
             </BrowserRouter>
 

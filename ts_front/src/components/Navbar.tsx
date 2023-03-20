@@ -1,11 +1,14 @@
 /* Base */
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { doLogout } from '../contexts/AuthContext'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Nav, Navbar, Button } from 'react-bootstrap'
 
 /* Web */
 import axios from 'axios'
+
+/* Styling */
+import './Navbar.css'
 
 
 export default function NavigationBar() {
@@ -53,18 +56,10 @@ export default function NavigationBar() {
             <Navbar bg="light" variant="light">
                 <Navbar.Brand>Board Game</Navbar.Brand>
                 <Nav className="me-auto">
-
-                { state.username && 
-                    <>
-                        <Button variant='primary' onClick={handleClick}>Logout</Button>
-                    </> 
-                }
-                { !state.username && 
-                    <>
-                        <Nav.Link href="/signup">Signup</Nav.Link>
-                        <Nav.Link href="/login">Login</Nav.Link>
-                    </>
-                }
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href={`/tictactoe/lobby/${state.username}`}>Tictactoe</Nav.Link>
+                    <Nav.Link href="/">Catan</Nav.Link>              
+                    <Button className="logout_button" variant='primary' onClick={handleClick}>Logout</Button>
                 </Nav>
             </Navbar>
         </div>

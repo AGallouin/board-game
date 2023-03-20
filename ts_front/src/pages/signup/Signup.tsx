@@ -1,21 +1,31 @@
 /* Base */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
-import { Button, Form, InputGroup } from 'react-bootstrap'
 
 /* Authentication Context */
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { doLogin } from '../../contexts/AuthContext'
 
+/* Bootstrap */
+import { Button, Form, Card, Container, Modal } from 'react-bootstrap'
+
+/* Styling */
+import './Signup.css'
+
+
 
 export default function Signup() {
 
     /* Declaring State Object and Constant variables */
-    const [email, setEmail] = useState<string>('')
-    const [username, setUsername] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
-    const [error, setError] = useState<string>('')
+    const [ email, setEmail ] = useState<string>("")
+    const [ username, setUsername ] = useState<string>("")
+    const [ password, setPassword ] = useState<string>("")
+    const [ emailError, setEmailError ] = useState<string | null>(null)
+    const [ usernameError, setUsernameError ] = useState<string | null>(null)
+    const [ passwordError, setPasswordError ] = useState<string | null>(null)
+    const [ generalError, setGeneralError ] = useState<string | null>(null)
+    const [ showError, setShowError ] = useState<boolean>(false)
 
     const { dispatch } = useAuthContext()
 
@@ -41,64 +51,89 @@ export default function Signup() {
 
             })
             .catch((err) => {
+                setShowError(true)
                 if (err.response) {
                     /* The request was made and the server responded with a status code that falls out of the range of 2xx */
-                    console.log(Object.values(err.response.data.error).join(', '))
-                    setError(Object.values(err.response.data.error).join(', '))
+                    console.log(err.response.data.error)
+                    setEmailError(err.response.data.error.email)
+                    setUsernameError(err.response.data.error.username)
+                    setPasswordError(err.response.data.error.password)
 
                 } else if (err.request) {
                     /* The request was made but no response was received */
                     console.log(err.request)
-                    setError(err.request)
+                    setGeneralError(err.request)
 
                 } else {
                     /* Something happened in setting up the request that triggered an Error */
                     console.log(err.message)
-                    setError(err.message)
+                    setGeneralError(err.message)
                 }
                 console.log(err.config)
             });
     }
 
+
+    const errorMessage: string | null = emailError + "hello"
+
     /* Render */
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Label>User email:</Form.Label>
-            <InputGroup className="signup_form_email">
-                <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-                <Form.Control 
-                    type="email" 
-                    placeholder='Enter email'
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                />
-            </InputGroup>
+        <Container fluid className="signup_page">
 
+            <Card className="signup_form_card">
+                <Card.Body>
+                    <Card.Title className="signup_form_title">Create an account</Card.Title>
+                    <Form className="signup_form" onSubmit={handleSubmit}>
+                        <Form.Group className="signup_form_input">
+                            <Form.Label className="signup_form_label">Email:</Form.Label>
+                            <Form.Control 
+                                type="email" 
+                                placeholder='Enter email'
+                                onChange={(e) => setEmail(e.target.value)}
+                                value={email}
+                            />
+                        </Form.Group>
+
+                        
+                        <Form.Group className="signup_form_input">
+                            <Form.Label className="signup_form_label">Username:</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                placeholder='Enter username'
+                                onChange={(e) => setUsername(e.target.value)}
+                                value={username}
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="signup_form_input">
+                            <Form.Label className="signup_form_label">Password:</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                placeholder='Enter password'
+                                onChange={(e) => setPassword(e.target.value)}
+                                value={password}
+                            />
+                        </Form.Group>
+
+                        <Button className="signup_submit_button" variant='primary' type="submit">Sign up</Button>
+
+                    </Form> 
+                </Card.Body>
+                <Card.Footer className="signup_card_footer"> Already have an account? {<Link to="/login">Login</Link>} </Card.Footer>
+            </Card>
             
-            <Form.Group className="signup_form_username">
-                <Form.Label>User username:</Form.Label>
-                <Form.Control 
-                    type="text" 
-                    placeholder='Enter username'
-                    onChange={(e) => setUsername(e.target.value)}
-                    value={username}
-                />
-            </Form.Group>
+            <Modal className="error_modal" show={showError} onHide={() => setShowError(false)}>
+                <Modal.Header>Error<button className="error_modal_close" onClick={()=>setShowError(false)}>X</button></Modal.Header>
 
-            <Form.Group className="signup_form_password">
-                <Form.Label>User password:</Form.Label>
-                <Form.Control 
-                    type="password" 
-                    placeholder='Enter password'
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                />
-            </Form.Group>
-            
-            <Button variant='primary' type="submit">Sign up</Button>
-
-            { (error != '') && <p>{error}</p> }
-
-        </Form>
+                <Modal.Body>
+                    <>
+                        {generalError} { generalError && <br/> }
+                        { emailError && "Email: " } {emailError} { emailError && <br/> }
+                        { usernameError && "Username: " } {usernameError} { usernameError && <br/> }
+                        { passwordError && "Password: " } {passwordError}
+                    </>
+                </Modal.Body>
+            </Modal>
+        </Container>        
     )
 }

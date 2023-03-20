@@ -8,6 +8,9 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 /* Hooks */
 import useTictactoeLog from '../../hooks/useTictactoeLog';
 
+/* Bootstrap */
+import { Container, Col, Row, Card, Modal, ListGroup, Button } from 'react-bootstrap';
+
 /* Styling */
 import './Tictactoe.css'
 
@@ -55,6 +58,7 @@ export default function Tictactoe() {
     const [ squareMatrix, setSquareMatrix ] = useState<string[][]>([])
 
     const [ backendMessage, setBackendMessage ] = useState<any>(null)
+    const [ showError, setShowError ] = useState<boolean>(false)
     const { gameStatus, gameLog, error } = useTictactoeLog(backendMessage)
 
     const { state } = useAuthContext()
@@ -130,6 +134,9 @@ export default function Tictactoe() {
             if (jsonData.status === "success" && jsonData.type === "in_game") {
                 changeSquareValue(jsonData.data.col_id, jsonData.data.row_id, jsonData.data.value)
             }
+            if (jsonData.status === "error") {
+                setShowError(true)
+            }
 
         }
 
@@ -149,40 +156,105 @@ export default function Tictactoe() {
         navigate("/tictactoe/lobby/" + state.username)
     }
 
-    useEffect(()=>{console.log(gameStatus); console.log(error); console.log(gameLog)}, [error, gameStatus, gameLog])
+
     return(
-        <div>
-            <div className='board'>
-                { !isInitialized && <h1>Loading...</h1> }
-                { isInitialized && [ ...Array(boardSize.current) ].map((e, i) => 
-                    <div className='board_row' key={i}>
-                        { [ ...Array(boardSize.current) ].map((e, j) => 
-                            <Square 
-                                key={j}
-                                squareColId={colId.current[j]} 
-                                squareRowId={rowId.current[i]} 
-                                squareValue={squareMatrix[j][i]}
-                                handleClick={(e) => handleClick(e, colId.current[j], rowId.current[i])}
-                            />
-                        )}
+        <Container fluid>
+            <Row>
+                <Col>
+                    <div className='board'>
+                        { !isInitialized && <h1>Loading...</h1> }
+                        { isInitialized && [ ...Array(boardSize.current) ].map((e, i) => 
+                            <div className='board_row' key={i}>
+                                { [ ...Array(boardSize.current) ].map((e, j) => 
+                                    <Square 
+                                        key={j}
+                                        squareColId={colId.current[j]} 
+                                        squareRowId={rowId.current[i]} 
+                                        squareValue={squareMatrix[j][i]}
+                                        handleClick={(e) => handleClick(e, colId.current[j], rowId.current[i])}
+                                    />
+                                )}
+                            </div>
+                        )}                        
                     </div>
-                )}
-                { error && <p className="error">{error}</p>}
-                <button onClick={goToLobby}>Go back to Lobby</button>
-            </div>
-            <div className='game_status'>
-                <h2>Game Details:</h2>
-                { gameStatus.gameOver && gameStatus.isDraw && <h3>Game Status: Draw</h3>}
-                { gameStatus.gameOver && !gameStatus.isDraw && <h3>Game Status: Game over</h3>}
-                { !gameStatus.gameOver && <h3>Game Status: Game on</h3>}
-                <h3>First Player: {gameStatus.firstPlayer}</h3>
-                <h3>Second Player: {gameStatus.secondPlayer}</h3>
-                { !gameStatus.gameOver && <h3>Current Turn: {gameStatus.currentTurn}</h3>}
-                { gameStatus.gameOver && !gameStatus.isDraw && <h3>Winner: {gameStatus.gameWinner}</h3>}
-            </div>
-            <div className='game_log'>
-                { gameLog.map((log, i) => <p key={i}>{log}</p>)}
-            </div>
-        </div>
+                </Col>
+                <Col>
+                    <Card className='game_status'>
+                        <Card.Header>Game Details</Card.Header>
+                        <Card.Body>
+                            <Container>
+                                <Row>
+                                    <Col>
+                                        <ListGroup variant="flush">
+                                            <ListGroup.Item className="tictactoe_list_item">
+                                                <div>
+                                                    <div className="status_list_title">Game Status</div> 
+                                                    { gameStatus.gameOver && gameStatus.isDraw && "Draw" }
+                                                    { gameStatus.gameOver && !gameStatus.isDraw && "Game over" }
+                                                    { !gameStatus.gameOver && "Game on" }
+                                                </div>
+                                            </ListGroup.Item>
+                                            <ListGroup.Item className="tictactoe_list_item">
+                                                { !gameStatus.gameOver && 
+                                                    <div>
+                                                        <div className="status_list_title">Current Turn</div>
+                                                        { gameStatus.currentTurn }
+                                                    </div>
+                                                }
+                                                { gameStatus.gameOver && 
+                                                    !gameStatus.isDraw && 
+                                                        <div>
+                                                            <div className="status_list_title">Winner</div> 
+                                                            { gameStatus.gameWinner }
+                                                        </div>
+                                                }
+                                            </ListGroup.Item>
+                                        </ListGroup>
+                                    </Col>
+                                    <Col>
+                                        <ListGroup variant="flush">
+                                            <ListGroup.Item className="tictactoe_list_item">
+                                                <div>
+                                                    <div className="status_list_title">First Player</div> 
+                                                    {gameStatus.firstPlayer}
+                                                </div>
+                                            </ListGroup.Item>
+                                            <ListGroup.Item className="tictactoe_list_item">
+                                                <div>
+                                                    <div className="status_list_title">Second Player</div> 
+                                                        { !gameStatus.secondPlayer && "Waiting for an opponent to join"}
+                                                        { gameStatus.secondPlayer }
+                                                </div>
+                                            </ListGroup.Item>
+                                        </ListGroup>
+                                    </Col>
+                                </Row>
+                            </Container>
+ 
+                            <Button className="back_button" onClick={goToLobby}>Go back to Lobby</Button>
+                            
+                        </Card.Body>
+                    </Card>
+                    <Card className='game_log'>      
+                        <Card.Header>Log</Card.Header>
+                        <Card.Body className="scroll">
+                            <ListGroup variant="flush">
+                                { gameLog.map((log, i) => 
+                                    <ListGroup.Item className="tictactoe_list_item" key={i}>{log}</ListGroup.Item>                                
+                                )}
+                            </ListGroup>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+            <Modal className="error_modal" show={showError} onHide={() => setShowError(false)}>
+                <Modal.Header>Error<button className="error_modal_close" onClick={()=>setShowError(false)}>X</button></Modal.Header>
+                <Modal.Body>
+                    <>
+                        { error }
+                    </>
+                </Modal.Body>
+            </Modal>
+        </Container> 
     )
 }

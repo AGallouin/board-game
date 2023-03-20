@@ -1,0 +1,23 @@
+.home {
+    color: #04496b;
+    text-align: center;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 10%;
+}
+
+.home_col {
+    height: 600px;
+}
+
+.home_card {
+    color: #04496b;
+    height: 100% !important;
+}
+
+.home_card .card-header {
+    font-size: 24px;
+    font-weight: bold;
+}

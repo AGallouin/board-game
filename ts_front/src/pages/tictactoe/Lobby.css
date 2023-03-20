@@ -1,0 +1,45 @@
+.create_card {
+    color: #04496b;
+    height: 14rem !important;
+    width: 30rem !important;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 25%;
+    font-size: 14px;
+}
+
+.create_card .card-header {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.create_button {
+    margin-top: 20px;
+    width: 445px;
+    background-color: #04496b !important;
+    border-color: #04496b !important;
+}
+
+.lobby_card {
+    position: relative;
+    color: #04496b;
+    height: 25rem !important;
+    width: 60rem !important;
+    margin-left: auto;
+    right: 5%;
+    margin-top: 1%;
+    margin-bottom: 2%;
+}
+
+.lobby_card .card-header {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.lobby_card_list_item {
+    background-color: #04496b !important;
+    color: white !important;
+}
