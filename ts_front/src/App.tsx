@@ -9,11 +9,12 @@ import NavigationBar from './components/Navbar';
 import Home from './pages/home/Home';
 import Signup from './pages/signup/Signup';
 import Login from './pages/login/Login';
+import Lobby from './pages/tictactoe/Lobby';
 import Tictactoe from './pages/tictactoe/Tictactoe';
 
 /* Styles */
 import './App.css';
-import Lobby from './pages/tictactoe/Lobby';
+
 
 function App() {
 
