@@ -69,7 +69,7 @@ class Game(models.Model):
                 setup_material: list[tuple[str, int]] = [("Knight", 14+increment*6), ("Victory", 5), ("Road", 2+increment), 
                                                          ("Resources", 2+increment), ("Monopoly", 2+increment)]
             case "architecture":
-                setup_material: list[tuple[str, int]] = [("Town", 4), ("Colony", 5), ("Road", 15)]
+                setup_material: list[tuple[str, int]] = [("City", 4), ("Colony", 5), ("Road", 15)]
             case _:
                 raise NameError('Unknown material type')
         
@@ -108,6 +108,13 @@ class Game(models.Model):
                 Hexagone.objects.create(game=self, col_id=col, row_id=row, tile_type=tile_type, 
                                         tile_number=tile_number, is_thief=(tile_type_counter==thief_index))
 
+
+        nb_junction_row = 2 * (nb_row + 1)
+        nb_junction_col = 2 * max(nb_col_per_row) + 1
+        for row in range(nb_junction_row):
+            for col in range(nb_junction_col):
+                Junction.objects.create(game=self, col_id=col, row_id=row)
+                
 
     def setup_materials(self, max_player: int) -> None:
 
@@ -186,15 +193,20 @@ class Game(models.Model):
 
         match self.game_phase:
             case "Set_Move_Order":
-                current_player: Player = Player.objects.get(player_id=player_id)
-                MoveOrder.process_one_turn(game_id=self.pk, player_id=current_player.pk)
+                MoveOrder.roll_dice(self.pk, player_id)
+                MoveOrder.set_has_rolled(self.pk, player_id)
+                MoveOrder.set_move_order(self.pk)
+                MoveOrder.set_is_duplicate(self.pk)
 
                 if MoveOrder.is_any_duplicate():
                     self.next_player_turn(MoveOrder.get_next_roll_player(self.pk))
                 else:
-                    self.game_phase = "Game"
+                    self.game_phase = "Preparation"
                     self.save()
             
+            case "Preparation":
+                pass
+
             case "Game":
                 pass
 
@@ -270,6 +282,44 @@ class Hexagone(models.Model):
     col_id = models.IntegerField()
     row_id = models.IntegerField()
     is_thief = models.BooleanField(default=False)
+
+
+
+class Junction(models.Model):
+
+    PROPERTY: tuple[tuple[str, str]] = (
+        ("None", "None"),
+        ("Colony", "Colony"),
+        ("City", "City")
+    )
+
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    col_id = models.IntegerField()
+    row_id = models.IntegerField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    property_type = models.CharField(max_length=len(max([max(choice, key=len) for choice in PROPERTY], key=len)), choices=PROPERTY, default="None")
+
+    @staticmethod
+
+    def check_surroundings(col_nb: int, row_nb: int) -> bool:
+        if 1:
+            is_valid = False
+        else:
+            is_valid = False
+        
+        return is_valid
+
+
+class Side(models.Model):
+
+    PROPERTY: tuple[tuple[str, str]] = (
+        ("None", "None"),
+        ("Road", "Road")
+    )
+
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    property_type = models.CharField(max_length=len(max([max(choice, key=len) for choice in PROPERTY], key=len)), choices=PROPERTY, default="None")
 
 
 
@@ -380,16 +430,3 @@ class MoveOrder(models.Model):
         next_player_id: int = MoveOrder.objects.get(game_id=game_id, move_order= next_player_recorded_move_order).player_id
 
         return next_player_id
-
-
-    @staticmethod
-    def process_one_turn(game_id: int, player_id: int):
-        MoveOrder.roll_dice(game_id, player_id)
-        MoveOrder.set_has_rolled(game_id, player_id)
-        MoveOrder.set_move_order(game_id)
-        MoveOrder.set_is_duplicate(game_id)
-
-
-
-class Road(models.Model):
-    pass
