@@ -1,5 +1,5 @@
 /* Base */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 /* Context */
@@ -64,7 +64,7 @@ export default function Tictactoe() {
     const { state } = useAuthContext()
     const { id } = useParams()
     const ws = useRef<WebSocket | null>(null)
-    const ws_url: string = "ws://127.0.0.1:8000/ws/tictactoe/" + id
+    const ws_url: string = process.env.REACT_APP_BACKEND_WS_URL + "/ws/tictactoe/" + id
     const navigate = useNavigate()
 
 
@@ -80,7 +80,7 @@ export default function Tictactoe() {
 
 
     const initializeSquareMatrix = () => {
-        initialBoardState.current.map((square: IBackEndSquareProp) => {
+        initialBoardState.current.forEach((square: IBackEndSquareProp) => {
             initialSquareMatrix.current[square.col_id][square.row_id] = square.value
         })
         setSquareMatrix(initialSquareMatrix.current)
@@ -114,7 +114,7 @@ export default function Tictactoe() {
             wsCurrent.close();
         };
 
-    }, [ws_url])
+    }, [ws_url, state.username])
 
 
 
@@ -128,7 +128,7 @@ export default function Tictactoe() {
             setBackendMessage(jsonData)
             console.log(jsonData)
 
-            if (jsonData.status === "success" && jsonData.type === "game_system" && jsonData.data.category != "game_leave") {
+            if (jsonData.status === "success" && jsonData.type === "game_system" && jsonData.data.category !== "game_leave") {
                 initializeBoard(jsonData.data.board_status)
             }
             if (jsonData.status === "success" && jsonData.type === "in_game") {
@@ -158,10 +158,10 @@ export default function Tictactoe() {
 
 
     return(
-        <Container fluid>
+        <Container fluid className="tictactoe_game">
             <Row>
-                <Col>
-                    <div className='board'>
+                <Col className="board_col">
+                    <div className="board">
                         { !isInitialized && <h1>Loading...</h1> }
                         { isInitialized && [ ...Array(boardSize.current) ].map((e, i) => 
                             <div className='board_row' key={i}>
@@ -177,6 +177,7 @@ export default function Tictactoe() {
                             </div>
                         )}                        
                     </div>
+
                 </Col>
                 <Col>
                     <Card className='game_status'>

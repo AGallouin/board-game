@@ -25,7 +25,7 @@ export default function Lobby() {
     const [ error, setError ] = useState<string>("")
     const [ showError, setShowError ] = useState<boolean>(false)
 
-    const url = "http://localhost:8000/tictactoe/lobby/" + state.username
+    const url = process.env.REACT_APP_BACKEND_URL + "/tictactoe/lobby/" + state.username
 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>, username: string | null) => {
@@ -100,7 +100,7 @@ export default function Lobby() {
             })
             .catch((error) => {
                 console.log(error)
-            }) 
+            })  
     }, [url])
 
 
@@ -129,7 +129,7 @@ export default function Lobby() {
                         </Card.Body>
                     </Card>   
                 </Col>
-                <Col>
+                <Col className="game_access_column">
                     <Card className="lobby_card">
                         <Card.Header>Available Games</Card.Header>
                         <Card.Body className="scroll">

@@ -8,10 +8,11 @@
     height: 28rem !important;
     display: flex;
     justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
     position: relative;
-    top: 25%;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin: 0 auto;
 }
 
 .signup_form {
@@ -25,12 +26,13 @@
     color: #04496b;
     font-size: 24px !important;
     text-align: center;
+    overflow: visible;
 }
 
 .signup_form_label {
     color: #04496b;
     font-size: 14px;
-    margin-bottom: -10% !important;
+    margin-bottom: -0.5vh !important;
 }
 
 .signup_form_input {

@@ -29,7 +29,7 @@ export default function Signup() {
 
     const { dispatch } = useAuthContext()
 
-    const url = 'http://localhost:8000/user/signup'
+    const url = process.env.REACT_APP_BACKEND_URL + "/user/signup"
 
     const navigate = useNavigate()
 
@@ -73,8 +73,6 @@ export default function Signup() {
             });
     }
 
-
-    const errorMessage: string | null = emailError + "hello"
 
     /* Render */
     return (

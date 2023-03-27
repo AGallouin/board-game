@@ -8,10 +8,11 @@
     height: 22rem !important;
     display: flex;
     justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
     position: relative;
-    top: 25%;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin: 0 auto;
 }
 
 .login_form {
@@ -25,12 +26,13 @@
     color: #04496b;
     font-size: 24px !important;
     text-align: center;
+    overflow: visible;
 }
 
 .login_form_label {
     color: #04496b;
     font-size: 14px;
-    margin-bottom: -10% !important;
+    margin-bottom: -0.5vh !important;
 }
 
 .login_form_input {
@@ -53,15 +55,4 @@
     width: 360px;
     background-color: #04496b !important;
     border-color: #04496b !important;
-}
-
-
-.login_error_modal .modal-header {
-    font-size: 24px;
-    background-color: #d64249;
-    color: #FFFFFF;
-    display: flex;
-    text-align: center;
-    justify-content: center;
-    height: 40px
 }

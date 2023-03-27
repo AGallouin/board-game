@@ -1,38 +1,42 @@
+.tictactoe_game{
+    height: 90vh;
+    margin-top: 10vh;
+}
+
+.board_col {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .board {
-    position: relative;
-    margin-left: 9%;
-    margin-top: 5%;
+    display: block;
+    position: absolute;
+    top: 55%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .square {
     background: #fff;
-    border: 2px solid #060606;
-    float: left;
-    font-size: 75px;
+    border: 1px solid #060606;
+    height: 16vh;
+    width: 8vw;
+    font-size: 10vh;
     font-weight: bold;
-    line-height: 34px;
-    height: 150px;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
     text-align: center;
-    width: 150px;
-}
-
-.board_row:after {
-    clear: both;
-    content: '';
-    display: table;
+    float: left;
 }
 
 .game_status {
-    position: relative;
-    max-height: 300px;
+    height: 37vh !important;
+    width: 45vw !important;
 }
 
 .game_log {
-    position: relative;
-    max-height: 500px;
+    max-height: 45vh !important;
+    width: 45vw !important;
 }
 
 .card {
@@ -45,6 +49,7 @@
     font-size: 24px;
     font-weight: bold;
     text-align: center;
+    overflow: visible;
 }
 
 .tictactoe_list_item {
@@ -57,9 +62,9 @@
 
 .back_button {
     position: relative;
-    margin-top: 10px;
-    left: 300px;
-    width: 300px;
+    margin-top: 2vh;
+    left: 12vw;
+    width: 20vw;
     background-color: #04496b !important;
     border-color: #04496b !important;
 }

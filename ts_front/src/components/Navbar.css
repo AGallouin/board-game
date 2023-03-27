@@ -1,6 +1,6 @@
 .navbar {
     width: 100%;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .navbar-brand {
@@ -8,8 +8,16 @@
 }
 
 .logout_button {
-    position: relative;
-    right: -450%;
+    display: flex;
     background-color: #04496b !important;
     border-color: #04496b !important;
+    font-size: 15px !important;
+}
+
+.nav-pills .nav-link.active {
+    color: #04496b !important;
+    background-color: transparent !important;
+    border-color: #04496b !important;
+    border-width: 1px !important;
+    border-style: solid !important;
 }

@@ -1,20 +1,25 @@
 .home {
     color: #04496b;
     text-align: center;
-    height: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-    top: 10%;
+    height: 100vh;
 }
 
-.home_col {
-    height: 600px;
+.home_title {
+    margin-top: 7%;
+    padding-bottom: 2%;
+}
+
+.home_container {
+    height: 70vh;
+}
+
+.home_row {
+    height: 70vh;
 }
 
 .home_card {
     color: #04496b;
-    height: 100% !important;
+    height: 95% !important;
 }
 
 .home_card .card-header {

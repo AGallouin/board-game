@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import environ
 
-
 env = environ.Env()
 environ.Env.read_env()
 

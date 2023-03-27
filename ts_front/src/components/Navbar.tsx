@@ -1,8 +1,9 @@
 /* Base */
-import { useNavigate, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { doLogout } from '../contexts/AuthContext'
 import { useAuthContext } from '../hooks/useAuthContext'
-import { Nav, Navbar, Button } from 'react-bootstrap'
+import { Nav, Navbar, Button, Container } from 'react-bootstrap'
 
 /* Web */
 import axios from 'axios'
@@ -14,9 +15,11 @@ import './Navbar.css'
 export default function NavigationBar() {
 
     /* Declaring State Object and Constant variables */
+    const [ isInGame, setIsInGame ] = useState<boolean>(false)
     const { state, dispatch } = useAuthContext()
-    const url = "http://localhost:8000/user/logout"
+    const url = process.env.REACT_APP_BACKEND_URL + "/user/logout"
     const navigate = useNavigate()
+    const location = useLocation()
 
 
     /* Declaring Event handler */
@@ -49,19 +52,32 @@ export default function NavigationBar() {
 
     }
 
+    
+    useEffect(() => {
+        setIsInGame(!isNaN(parseInt(location.pathname.replace("/tictactoe/", ""))))
+    }, [location.pathname])
+
 
     /* Render */
     return (
-        <div className="navbar">
-            <Navbar bg="light" variant="light">
+        <Navbar className="navbar" bg="light" variant="light" fixed="top">
+            <Container fluid>
                 <Navbar.Brand>Board Game</Navbar.Brand>
-                <Nav className="me-auto">
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href={`/tictactoe/lobby/${state.username}`}>Tictactoe</Nav.Link>
-                    <Nav.Link href="/">Catan</Nav.Link>              
-                    <Button className="logout_button" variant='primary' onClick={handleClick}>Logout</Button>
+                <Nav activeKey={location.pathname} className="me-auto" variant="pills">
+                    <Nav.Item>
+                        <Nav.Link href="/">Home</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link href={`/tictactoe/lobby/${state.username}`}>Tictactoe</Nav.Link>
+                    </Nav.Item>
+                    { isInGame &&
+                        <Nav.Item>
+                            <Nav.Link eventKey={location.pathname}>Game: #{location.pathname.replace("/tictactoe/", "")}</Nav.Link>
+                        </Nav.Item>
+                    }
                 </Nav>
-            </Navbar>
-        </div>
+                <Button className="logout_button mr-auto" variant='primary' onClick={handleClick}>Logout</Button>
+            </Container>
+        </Navbar>
     )
 }

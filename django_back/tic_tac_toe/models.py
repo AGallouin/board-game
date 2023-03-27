@@ -103,7 +103,7 @@ class Game(models.Model):
 
 
 
-    def register_opponent(self, username: str):
+    def register_opponent(self, username: str) -> None:
         player_to_register: User = User.objects.get(username=username)
         self.opponent = player_to_register
         self.save()

@@ -26,7 +26,7 @@ export default function Login() {
 
     const { dispatch } = useAuthContext()
 
-    const url = 'http://localhost:8000/user/login'
+    const url = process.env.REACT_APP_BACKEND_URL + "/user/login"
 
     const navigate = useNavigate()
 

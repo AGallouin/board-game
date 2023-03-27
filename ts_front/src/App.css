@@ -1,5 +1,6 @@
 .App {
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   background: linear-gradient(120deg, #008bcf, #FFFFFF);
 }
 
@@ -8,13 +9,14 @@
 }
 
 .error_modal .modal-header {
-  font-size: 24px;
+  font-size: 3vh;
   background-color: #d64249;
   color: #FFFFFF;
   display: flex;
   text-align: center;
   justify-content: center;
-  height: 40px
+  height: 6vh;
+  overflow: visible
 }
 
 .error_modal_close {

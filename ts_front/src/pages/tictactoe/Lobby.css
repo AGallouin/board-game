@@ -1,11 +1,17 @@
+.tictactoe_lobby {
+    height: 100vh
+}
+
 .create_card {
     color: #04496b;
-    height: 14rem !important;
-    width: 30rem !important;
+    height: 30vh !important;
+    width: 30vw !important;
     margin-left: auto;
     margin-right: auto;
-    position: relative;
-    top: 25%;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
     font-size: 14px;
 }
 
@@ -16,21 +22,27 @@
 }
 
 .create_button {
-    margin-top: 20px;
-    width: 445px;
+    position: relative;
+    margin-top: 3vh;
+    width: 15vw;
+    left: 6vw;
     background-color: #04496b !important;
     border-color: #04496b !important;
+}
+
+.game_access_column {
+    padding-top: 10vh;
 }
 
 .lobby_card {
     position: relative;
     color: #04496b;
-    height: 25rem !important;
-    width: 60rem !important;
+    height: 40vh !important;
+    width: 45vw !important;
     margin-left: auto;
-    right: 5%;
-    margin-top: 1%;
-    margin-bottom: 2%;
+    right: 5vh;
+    margin-top: 3vh;
+    margin-bottom: 2vh;
 }
 
 .lobby_card .card-header {
